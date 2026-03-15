@@ -1,4 +1,5 @@
 ﻿---
+import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -26,6 +27,7 @@ const ogImageUrl = new URL(siteMeta.ogImagePath, siteMeta.siteUrl).toString();
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content={siteMeta.themeColor} />
+    <meta name="color-scheme" content="light dark" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href={siteMeta.faviconPath} />
     <link rel="alternate" type="application/rss+xml" title={`${siteMeta.name} RSS`} href="/rss.xml" />
@@ -41,6 +43,24 @@ const ogImageUrl = new URL(siteMeta.ogImagePath, siteMeta.siteUrl).toString();
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <style is:inline>
+      :root {
+        background: #fafafa;
+        color: #171717;
+      }
+
+      html,
+      body {
+        background: #fafafa;
+        color: #171717;
+      }
+
+      html[data-theme="dark"],
+      html[data-theme="dark"] body {
+        background: #0f1115;
+        color: #f3f4f6;
+      }
+    </style>
     <script is:inline>
       (() => {
         try {
@@ -58,6 +78,7 @@ const ogImageUrl = new URL(siteMeta.ogImagePath, siteMeta.siteUrl).toString();
         }
       })();
     </script>
+    <ClientRouter />
   </head>
   <body>
     <Header currentPath={currentPath} />
