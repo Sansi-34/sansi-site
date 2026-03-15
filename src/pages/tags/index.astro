@@ -1,0 +1,50 @@
+﻿---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getTagStats, getResearchTracks } from "../../utils/content";
+import { getSearchIndex } from "../../utils/search";
+
+const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const searchIndex = getSearchIndex(notes);
+const tagStats = getTagStats(notes);
+const featured = getResearchTracks(notes).filter((item) => item.meta !== "后面会补").slice(0, 3);
+---
+<BaseLayout title="标签检索" description="通过标签和主题簇快速定位系统、硬件与图形相关记录。" currentPath="/tags" searchIndex={searchIndex}>
+  <section class="section-heading page-intro page-intro-compact">
+    <p class="eyebrow">标签</p>
+    <h1>先按关键词把路找出来。</h1>
+    <p class="section-copy">这里的标签和数量都跟着站内笔记走。你先按词找，再进具体内容。</p>
+  </section>
+
+  <section class="content-block">
+    <input class="search" data-tag-search type="search" placeholder="搜索标签：底层系统、AR、工具链..." aria-label="搜索标签" />
+  </section>
+
+  <section class="content-block">
+    <div class="tag-cloud">
+      {tagStats.map((tag) => (
+        <a class="tag-pill" data-tag-item={tag.label.toLowerCase()} href={`/tags/${tag.slug}`}>
+          {tag.label} ({tag.count})
+        </a>
+      ))}
+    </div>
+    <div class="empty-state" data-tag-empty hidden>没有匹配的标签。</div>
+  </section>
+
+  <section class="content-block">
+    <div class="section-heading">
+      <p class="eyebrow">常用入口</p>
+      <h2>先从现在已经有内容的方向开始</h2>
+    </div>
+    <div class="feature-grid">
+      {featured.map((item) => (
+        <article class="feature-card">
+          <p class="card-kicker">{item.kicker}</p>
+          <h3><a href={item.href}>{item.title}</a></h3>
+          <p>{item.summary}</p>
+          <div class="meta-row"><span>{item.meta}</span></div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

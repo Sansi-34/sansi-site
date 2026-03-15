@@ -1,0 +1,73 @@
+﻿---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { aboutHero, aboutMetrics, aboutPrinciples, contactInfo } from "../data/site";
+import { getSearchIndex } from "../utils/search";
+
+const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const searchIndex = getSearchIndex(notes);
+---
+<BaseLayout title="关于" description="关于 Sansi 的长期关注、工作方式，以及如何把复杂工程写成可复用文档。" currentPath="/about" searchIndex={searchIndex}>
+  <section class="about-hero page-intro page-intro-about">
+    <div class="about-hero-copy">
+      <p class="eyebrow">关于</p>
+      <h1>{aboutHero.title}</h1>
+      <p class="section-copy about-hero-description">{aboutHero.description}</p>
+    </div>
+  </section>
+
+  <section class="content-block about-metrics">
+    {aboutMetrics.map((item) => (
+      <article class="about-metric-card">
+        <span class="about-metric-label">{item.label}</span>
+        <h2>{item.title}</h2>
+        <p>{item.body}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="content-block about-principles">
+    <div class="section-heading">
+      <p class="eyebrow">做事的规矩</p>
+      <h2>有些事，我尽量不含糊</h2>
+    </div>
+    <div class="about-principles-grid">
+      {aboutPrinciples.map((item) => (
+        <article class="principle-card">
+          <span class="principle-index">{item.index}</span>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="content-block about-contact">
+    <div class="about-contact-shell">
+      <div class="about-contact-panel about-contact-primary">
+        <p class="eyebrow">要聊就聊实在的</p>
+        <h2>{contactInfo.intro}</h2>
+        <p class="about-contact-copy">{contactInfo.body}</p>
+        <div class="about-contact-tags">
+          {contactInfo.tags.map((tag) => <span class="about-contact-tag">{tag}</span>)}
+        </div>
+      </div>
+      <div class="about-contact-stack">
+        <a class="about-contact-card" href={`mailto:${contactInfo.email}`}>
+          <div class="about-contact-card-head"><span class="about-contact-label">邮箱</span></div>
+          <strong>{contactInfo.email}</strong>
+          <span class="about-contact-meta">话题长一点、事情正一点，走邮件</span>
+        </a>
+        <a class="about-contact-card" href={contactInfo.xUrl} target="_blank" rel="noreferrer">
+          <div class="about-contact-card-head"><span class="about-contact-label">X</span></div>
+          <strong>{contactInfo.xHandle}</strong>
+          <span class="about-contact-meta">想快点说、随手聊几句，走 X</span>
+        </a>
+        <div class="about-contact-note">
+          <div class="about-contact-card-head"><span class="about-contact-note-label">怎么找我更合适</span></div>
+          <p>事情完整一点，或者要认真聊技术、合作，优先邮件；要是只是想先搭个话、打个招呼，X 更利索。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,73 @@
+﻿---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { homeHero, oldPosts, upcomingTracks } from "../data/site";
+import { getResearchTracks } from "../utils/content";
+import { getSearchIndex } from "../utils/search";
+
+const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const searchIndex = getSearchIndex(notes);
+const researchTracks = getResearchTracks(notes).filter((item) => item.kicker !== "硬件").slice(0, 3);
+---
+<BaseLayout title="旧文拾回" description="记录 C++、嵌入式、PCB 打板与 AR 图形实践，持续整理确定性、验证链路与性能预算。" currentPath="/" searchIndex={searchIndex}>
+  <section class="hero page-intro page-intro-home">
+    <p class="eyebrow">{homeHero.eyebrow}</p>
+    <h1><span>{homeHero.titleLines[0]}</span><br /><span>{homeHero.titleLines[1]}</span></h1>
+    <p class="hero-copy hero-copy-compact leading-relaxed text-gray-500 max-w-2xl mt-4">
+      <span>{homeHero.noteLines[0]}</span>
+      <span>{homeHero.noteLines[1]}</span>
+    </p>
+    <div class="hero-actions hero-actions-home gap-4">
+      <a class="button button-primary" href={homeHero.primaryCta.href}>{homeHero.primaryCta.label}</a>
+      <a class="button button-quiet" href={homeHero.secondaryCta.href}>{homeHero.secondaryCta.label}</a>
+    </div>
+  </section>
+
+  <section class="feature-grid feature-grid-home">
+    {oldPosts.map((item, index) => (
+      <article class:list={["feature-card", "flex", "flex-col", "h-full", index === 0 && "feature-card-large"]}>
+        <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{item.label}</p>
+        {index === 0 ? <h2><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h2> : <h3><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h3>}
+        <p>{item.summary}</p>
+        <div class="meta-row mt-auto">
+          {item.meta.map((entry) => <span>{entry}</span>)}
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="content-block">
+    <div class="section-heading">
+      <p class="eyebrow">站内先立住的</p>
+      <h2>先把已经写下来的这几篇放上来</h2>
+    </div>
+    <div class="feature-grid">
+      {researchTracks.map((item) => (
+        <article class="feature-card">
+          <p class="card-kicker">{item.kicker}</p>
+          <h3><a href={item.href}>{item.title}</a></h3>
+          <p>{item.summary}</p>
+          <div class="meta-row"><span>{item.meta}</span></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="content-block">
+    <div class="section-heading">
+      <p class="eyebrow">接下来会慢慢补的</p>
+      <h2>这些方向，后面会一篇篇写出来</h2>
+    </div>
+    <div class="card-list">
+      {upcomingTracks.map((item) => (
+        <article class="project-card">
+          <div>
+            <p class="card-kicker">{item.kicker}</p>
+            <h3>{item.title}</h3>
+          </div>
+          <span class="card-link">{item.status}</span>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

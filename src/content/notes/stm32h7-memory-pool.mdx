@@ -1,0 +1,70 @@
+﻿---
+title: 在 STM32H7 上重构确定性的内存池分配路径
+description: 一篇关于在 STM32H7 上重构确定性内存池分配路径、观测方式与中断安全的技术笔记。
+date: 2026-03-13
+readingTime: 8 分钟阅读
+category: 系统
+kicker: 研究笔记
+excerpt: 在资源紧、外设重的板子上，动态分配最怕的不只是慢，而是不确定。
+tags:
+  - 底层系统
+  - C++
+  - 嵌入式
+related:
+  - startup-chain-350ms
+  - logs-as-assets
+  - oracle-bone-ar-pipeline
+keywords:
+  - stm32h7
+  - 内存池
+  - allocator
+  - 嵌入式
+  - 中断
+---
+
+在 STM32H7 这类内存并不宽裕、外设又重的板子上，动态分配往往是事故高发点。我们把旧版本的问题拆成三层：块大小策略、回收时机，以及中断上下文里的抢占路径。最终目标不是“看起来快”，而是“在极限工况下依然确定”。
+
+## 1. 先量化碎片，再谈优化
+
+压测日志显示，运行 72 小时后可用内存呈锯齿下降。我们引入分层桶和空闲链表压缩统计，先把碎片率可视化，再针对热点区间做策略切分。
+
+> 工程优化的第一步不是改代码，而是让问题可观测。
+
+## 2. 中断上下文必须保证确定性
+
+中断上下文只允许 O(1) 路径，不做复杂搜索。分配失败时立即退化到预留池，避免长尾延迟把实时任务拖死。
+
+## 3. API 结构保持对未来可扩展
+
+这次调整没有只盯着当前指标，而是先把接口层级收稳。后面要接可视化调试、远程日志、甚至更细的分区策略，都不用再推翻一次。
+
+<div class="code-window" aria-label="代码示例">
+  <div class="code-window-bar">
+    <div class="code-window-actions">
+      <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
+    </div>
+    <button class="copy-btn" data-copy-btn><span data-copy-label>复制</span></button>
+  </div>
+  <pre><code>{`struct PoolStats {
+  uint32_t used;
+  uint32_t free;
+  uint32_t fragments;
+  uint32_t peak;
+};
+
+void* pool_alloc(size_t n, bool in_isr);
+void  pool_free(void* ptr);
+PoolStats pool_snapshot(void);`}</code></pre>
+</div>
+
+## 4. 和硬件约束一起设计
+
+这次改造同步回看了 PCB 上 SRAM 分区策略，避免“软件优化完，硬件瓶颈依旧”的割裂。系统工程一定是软硬件协同，不是单点表演。
+
+## 5. 结果
+
+72 小时压测后，碎片率从 18% 降至 4%，中断路径延迟 P99 降低 31%。更重要的是，调试链路和指标模型沉淀下来，后续迭代成本更低。
+
+---
+
+<p class="small-meta">[1] 测试平台：Cortex-M7 / 600MHz / RTOS Tick 1ms。</p>

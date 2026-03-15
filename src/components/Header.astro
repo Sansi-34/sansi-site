@@ -1,0 +1,33 @@
+﻿---
+import { navItems } from "../data/site";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+---
+<header class="site-header">
+  <div class="header-shell">
+    <a class="brand" href="/">Sansi</a>
+    <div class="header-actions">
+      <nav class="site-nav" aria-label="主导航">
+        {navItems.map((item) => {
+          const isActive = currentPath === item.href || (item.href !== "/" && currentPath.startsWith(item.href));
+          return (
+            <a href={item.href} aria-current={isActive ? "page" : undefined}>{item.label}</a>
+          );
+        })}
+      </nav>
+      <div class="header-search" data-search-root>
+        <form class="header-search-form" data-search-form autocomplete="off">
+          <input class="header-search-input" type="search" data-search-input placeholder="搜索专题、笔记、标签..." aria-label="全站搜索" />
+        </form>
+        <div class="header-search-results" data-search-results hidden></div>
+      </div>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换主题">
+        <span class="theme-toggle-icon" data-theme-icon aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>

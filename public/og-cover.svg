@@ -1,0 +1,50 @@
+﻿<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="52" x2="1080" y2="578" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCFCFD"/>
+      <stop offset="1" stop-color="#F5F7FA"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="790" y1="178" x2="1048" y2="472" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <filter id="shadow" x="24" y="24" width="1152" height="582" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="#FAFAFA"/>
+  <g filter="url(#shadow)">
+    <rect x="36" y="36" width="1128" height="558" rx="32" fill="url(#bg)"/>
+    <rect x="36.5" y="36.5" width="1127" height="557" rx="31.5" stroke="#E5E7EB"/>
+  </g>
+
+  <rect x="84" y="86" width="1032" height="60" rx="30" fill="#FFFFFF" fill-opacity="0.78" stroke="#E5E7EB"/>
+  <text x="122" y="126" fill="#111827" font-size="34" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="700">Sansi</text>
+  <text x="928" y="126" fill="#6B7280" font-size="20" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">39.97.252.239</text>
+
+  <text x="122" y="214" fill="#667085" font-size="22" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" letter-spacing="0.14em">PERSONAL NOTES / ENGINEERING LOG</text>
+  <text x="122" y="324" fill="#111827" font-size="80" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-weight="700">低頭趕路，</text>
+  <text x="122" y="418" fill="#111827" font-size="80" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-weight="700">敬事如儀。</text>
+  <text x="122" y="487" fill="#667085" font-size="28" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif">叁肆。水深流缓，三思而后定。</text>
+
+  <rect x="758" y="176" width="318" height="268" rx="28" fill="url(#panel)" stroke="#E5E7EB"/>
+  <text x="798" y="228" fill="#98A2B3" font-size="18" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" letter-spacing="0.12em">CURRENT DIRECTION</text>
+  <text x="798" y="292" fill="#111827" font-size="30" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-weight="700">C++ / 嵌入式</text>
+  <text x="798" y="336" fill="#111827" font-size="30" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif" font-weight="700">PCB / AR 图形</text>
+  <text x="798" y="392" fill="#667085" font-size="22" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif">先把真的摆上来，</text>
+  <text x="798" y="426" fill="#667085" font-size="22" font-family="PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif">再把手上的事慢慢做实。</text>
+
+  <rect x="798" y="468" width="92" height="38" rx="19" fill="#111827"/>
+  <text x="823" y="493" fill="#FFFFFF" font-size="17" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="600">HOME</text>
+  <rect x="902" y="468" width="102" height="38" rx="19" fill="#F3F4F6" stroke="#E5E7EB"/>
+  <text x="928" y="493" fill="#475467" font-size="17" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="600">ARCHIVE</text>
+
+  <rect x="122" y="532" width="74" height="34" rx="17" fill="#FFFFFF" stroke="#D0D5DD"/>
+  <text x="147" y="555" fill="#475467" font-size="17" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="600">C++</text>
+  <rect x="208" y="532" width="110" height="34" rx="17" fill="#FFFFFF" stroke="#D0D5DD"/>
+  <text x="236" y="555" fill="#475467" font-size="17" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="600">EMBEDDED</text>
+  <rect x="330" y="532" width="74" height="34" rx="17" fill="#FFFFFF" stroke="#D0D5DD"/>
+  <text x="356" y="555" fill="#475467" font-size="17" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="600">PCB</text>
+  <rect x="416" y="532" width="108" height="34" rx="17" fill="#FFFFFF" stroke="#D0D5DD"/>
+  <text x="455" y="555" fill="#475467" font-size="17" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="600">AR</text>
+</svg>

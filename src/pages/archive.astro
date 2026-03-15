@@ -1,0 +1,53 @@
+﻿---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { oldPosts } from "../data/site";
+import { getResearchTracks } from "../utils/content";
+import { getSearchIndex } from "../utils/search";
+
+const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const searchIndex = getSearchIndex(notes);
+const researchTracks = getResearchTracks(notes);
+---
+<BaseLayout title="专题归档" description="按方向浏览底层系统、PCB 硬件与 AR 图形实践，再进入对应笔记查看细节。" currentPath="/archive" searchIndex={searchIndex}>
+  <section class="section-heading page-intro page-intro-compact">
+    <p class="eyebrow">专题</p>
+    <h1>先把以前写过的和已经写下来的摆出来。</h1>
+    <p class="section-copy">以前写过的先收回来，站内已经写下来的先立住。硬件这条线还没补齐，但也不会躲着不写。</p>
+  </section>
+
+  <section class="content-block">
+    <div class="section-heading">
+      <p class="eyebrow">以前写过</p>
+      <h2>先把这三篇旧文收回来</h2>
+    </div>
+    <div class="archive-list">
+      {oldPosts.map((item) => (
+        <article class="archive-item">
+          <div class="small-meta">酷安旧文</div>
+          <div>
+            <h3><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h3>
+            <p>{item.summary}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="content-block">
+    <div class="section-heading">
+      <p class="eyebrow">站内笔记</p>
+      <h2>已经先写下来的，先从这里看</h2>
+    </div>
+    <div class="feature-grid">
+      {researchTracks.map((item) => (
+        <article class="feature-card">
+          <p class="card-kicker">{item.kicker}</p>
+          <h3><a href={item.href}>{item.title}</a></h3>
+          <p>{item.summary}</p>
+          <div class="meta-row"><span>{item.meta}</span></div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

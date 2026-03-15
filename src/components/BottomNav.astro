@@ -1,0 +1,19 @@
+﻿---
+import { navItems } from "../data/site";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+---
+<nav class="bottom-command-bar" aria-label="移动端命令栏">
+  <div class="bottom-command-nav">
+    {navItems.map((item) => {
+      const isActive = currentPath === item.href || (item.href !== "/" && currentPath.startsWith(item.href));
+      return (
+        <a href={item.href} aria-current={isActive ? "page" : undefined}>{`[${item.label}]`}</a>
+      );
+    })}
+  </div>
+</nav>

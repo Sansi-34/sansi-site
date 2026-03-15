@@ -1,0 +1,49 @@
+﻿---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getSearchIndex } from "../../utils/search";
+import { getTagStats, slugifyTag, tagLabelFromSlug } from "../../utils/content";
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notes", ({ data }) => !data.draft);
+  return getTagStats(notes).map((tag) => ({ params: { slug: tag.slug } }));
+}
+
+const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const searchIndex = getSearchIndex(notes);
+const { slug } = Astro.params;
+const label = tagLabelFromSlug(slug!, notes);
+const filteredNotes = notes.filter((note) => note.data.tags.some((tag) => slugifyTag(tag) === slug));
+const title = label === "graphics" ? "图形与 AR" : label;
+const description = `聚合 ${title} 相关的站内笔记与记录。`;
+---
+<BaseLayout title={String(title)} description={description} currentPath="/tags" searchIndex={searchIndex}>
+  <section class="section-heading page-intro page-intro-compact">
+    <p class="eyebrow">标签</p>
+    <h1>{title}</h1>
+    <p class="section-copy">沿着同一类问题慢慢看，会比一次只看一篇更清楚。</p>
+  </section>
+
+  <section class="content-block">
+    <div class="tags">
+      <a class="tag" href="/tags">全部标签</a>
+      <a class="tag is-active" href={`/tags/${slug}`}>{title}</a>
+    </div>
+  </section>
+
+  <section class="content-block">
+    <div class="archive-list">
+      {filteredNotes.map((note) => (
+        <article class="archive-item">
+          <div class="small-meta">{note.data.date.toISOString().slice(0, 10)}</div>
+          <div>
+            <h3><a href={`/notes/${note.id}`}>{note.data.title}</a></h3>
+            <p>{note.data.excerpt}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+

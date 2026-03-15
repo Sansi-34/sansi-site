@@ -1,0 +1,72 @@
+﻿---
+import { getCollection, render } from "astro:content";
+import { getNoteSummary, slugifyTag } from "../../utils/content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getSearchIndex } from "../../utils/search";
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notes", ({ data }) => !data.draft);
+  return notes.map((note) => ({ params: { slug: note.id } }));
+}
+
+const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const searchIndex = getSearchIndex(notes);
+const { slug } = Astro.params;
+const note = notes.find((item) => item.id === slug);
+if (!note) {
+  throw new Error(`Note not found: ${slug}`);
+}
+const relatedNotes = note.data.related
+  .map((relatedSlug) => notes.find((item) => item.id === relatedSlug))
+  .filter(Boolean);
+const { Content, headings } = await render(note);
+---
+<BaseLayout title={note.data.title} description={note.data.description} currentPath="/tags" searchIndex={searchIndex}>
+  <p class="breadcrumb">笔记</p>
+
+  <div class="layout-post">
+    <article>
+      <header class="post-header">
+        <p class="eyebrow">{note.data.kicker}</p>
+        <h1>{note.data.title}</h1>
+        <div class="meta-row">
+          <span>{note.data.date.toISOString().slice(0, 10)}</span>
+          <span>{note.data.readingTime}</span>
+          <span>{note.data.category}</span>
+          {note.data.tags.map((tag) => <a class="tag" href={`/tags/${slugifyTag(tag)}`}>{tag}</a>)}
+        </div>
+      </header>
+
+      <div class="post-content">
+        <Content />
+      </div>
+    </article>
+
+    <aside>
+      <div class="panel aside-card">
+        <p class="card-kicker">本页目录</p>
+        <nav class="toc" aria-label="文章目录">
+          {headings.map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}
+        </nav>
+      </div>
+    </aside>
+  </div>
+
+  {relatedNotes.length > 0 && (
+    <section class="content-block">
+      <div class="section-heading">
+        <p class="eyebrow">相关文章</p>
+        <h2>继续阅读</h2>
+      </div>
+      <div class="feature-grid">
+        {relatedNotes.map((item) => item && (
+          <article class="feature-card">
+            <p class="card-kicker">{item.data.category}</p>
+            <h3><a href={`/notes/${item.id}`}>{item.data.title}</a></h3>
+            <p>{getNoteSummary(item)}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>
