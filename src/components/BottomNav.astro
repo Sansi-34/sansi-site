@@ -11,8 +11,11 @@ const trailingItems = navItems.filter((item) => item.href !== currentItem.href);
 ---
 <nav class="bottom-command-bar" aria-label="移动端主导航">
   <div class="bottom-command-shell">
-    <p class="bottom-command-current">你在：<strong>{currentItem.label}</strong></p>
-    <div class="bottom-command-nav">
+    <div class="bottom-command-status" aria-label={`当前位置：${currentItem.label}`}>
+      <span class="bottom-command-status-label">PATH</span>
+      <span class="bottom-command-status-value">{currentItem.label}</span>
+    </div>
+    <div class="bottom-command-nav" aria-label="其它入口">
       {trailingItems.map((item) => (
         <a href={item.href}>{item.label}</a>
       ))}
