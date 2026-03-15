@@ -6,14 +6,16 @@ interface Props {
 }
 
 const { currentPath } = Astro.props;
+const currentItem = navItems.find((item) => currentPath === item.href || (item.href !== "/" && currentPath.startsWith(item.href))) ?? navItems[0];
+const trailingItems = navItems.filter((item) => item.href !== currentItem.href);
 ---
 <nav class="bottom-command-bar" aria-label="移动端主导航">
-  <div class="bottom-command-nav">
-    {navItems.map((item) => {
-      const isActive = currentPath === item.href || (item.href !== "/" && currentPath.startsWith(item.href));
-      return (
-        <a href={item.href} aria-current={isActive ? "page" : undefined}>{item.label}</a>
-      );
-    })}
+  <div class="bottom-command-shell">
+    <p class="bottom-command-current">你在：<strong>{currentItem.label}</strong></p>
+    <div class="bottom-command-nav">
+      {trailingItems.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+    </div>
   </div>
 </nav>
