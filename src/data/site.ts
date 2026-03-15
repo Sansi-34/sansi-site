@@ -25,7 +25,7 @@ export const homeHero = {
 
 export const oldPosts = [
   {
-    title: "家里有成砖的米环7先别扔，先看看我这再决定😉",
+    title: "家里有成砖的米环7先别扔，先看看我这再决定",
     summary: "一篇早期的救砖记录，写的是把已经半死不活的设备一点点拉回来的过程。",
     href: "https://www.coolapk.com/feed/48604151?s=MGRlZmZjZGIxNTg5NzI3ZzY5YjU2MmFmega1580",
     label: "以前写过",
@@ -42,7 +42,7 @@ export const oldPosts = [
     keywords: ["努比亚", "z17mini", "小牛", "手机", "酷安"]
   },
   {
-    title: "什么?三星平板能\"死而复生\"！！！",
+    title: "什么？三星平板能“死而复生”！！！",
     summary: "也是一篇偏折腾向的排障记录，带点兴奋，也带点不服输。",
     href: "https://www.coolapk.com/feed/48018008?s=NjRiODU1YmIxNTg5NzI3ZzY5YjU2NGJmega1580",
     label: "以前写过",

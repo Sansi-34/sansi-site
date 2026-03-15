@@ -7,12 +7,12 @@ interface Props {
 
 const { currentPath } = Astro.props;
 ---
-<nav class="bottom-command-bar" aria-label="移动端命令栏">
+<nav class="bottom-command-bar" aria-label="移动端主导航">
   <div class="bottom-command-nav">
     {navItems.map((item) => {
       const isActive = currentPath === item.href || (item.href !== "/" && currentPath.startsWith(item.href));
       return (
-        <a href={item.href} aria-current={isActive ? "page" : undefined}>{`[${item.label}]`}</a>
+        <a href={item.href} aria-current={isActive ? "page" : undefined}>{item.label}</a>
       );
     })}
   </div>
