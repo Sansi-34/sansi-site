@@ -3,7 +3,10 @@
   const THEME_LABELS = { system: "跟随系统", light: "明亮", dark: "黑暗" };
   const THEME_ORDER = ["system", "light", "dark"];
   const themeMedia = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
-  const SEARCH_INDEX = Array.isArray(window.__SANSI_SEARCH__) ? window.__SANSI_SEARCH__ : [];
+
+  function getSearchIndex() {
+    return Array.isArray(window.__SANSI_SEARCH__) ? window.__SANSI_SEARCH__ : [];
+  }
 
   function getIconMarkup(name) {
     const icons = {
@@ -50,22 +53,29 @@
     const currentMode = document.documentElement.getAttribute("data-theme-mode") || getStoredThemeMode();
     const currentIndex = THEME_ORDER.indexOf(currentMode);
     const nextMode = THEME_ORDER[(currentIndex + 1) % THEME_ORDER.length];
-    try { localStorage.setItem(THEME_STORAGE_KEY, nextMode); } catch {}
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, nextMode);
+    } catch {}
     applyTheme(nextMode);
   }
 
   function bindThemeToggle() {
-    document.querySelectorAll("[data-theme-toggle]").forEach((button) => button.addEventListener("click", cycleThemeMode));
+    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+      if (button.dataset.boundThemeToggle === "true") return;
+      button.dataset.boundThemeToggle = "true";
+      button.addEventListener("click", cycleThemeMode);
+    });
   }
 
   function bindSystemThemeListener() {
-    if (!themeMedia) return;
+    if (!themeMedia || window.__SANSI_THEME_MEDIA_BOUND__) return;
     const handleChange = () => {
       const currentMode = document.documentElement.getAttribute("data-theme-mode") || getStoredThemeMode();
       if (currentMode === "system") applyTheme("system");
     };
     if (typeof themeMedia.addEventListener === "function") themeMedia.addEventListener("change", handleChange);
     else if (typeof themeMedia.addListener === "function") themeMedia.addListener(handleChange);
+    window.__SANSI_THEME_MEDIA_BOUND__ = true;
   }
 
   function escapeHtml(value) {
@@ -95,8 +105,12 @@
     if (searchRoots.length === 0) return;
 
     const currentUrl = `${window.location.pathname}${window.location.search}`;
+    const searchIndex = getSearchIndex();
 
     searchRoots.forEach((root) => {
+      if (root.dataset.boundSearch === "true") return;
+      root.dataset.boundSearch = "true";
+
       const form = root.querySelector("[data-search-form]");
       const input = root.querySelector("[data-search-input]");
       const results = root.querySelector("[data-search-results]");
@@ -150,7 +164,7 @@
           closeResults();
           return;
         }
-        const matches = SEARCH_INDEX.filter((entry) => createSearchText(entry).includes(keyword)).slice(0, 6);
+        const matches = searchIndex.filter((entry) => createSearchText(entry).includes(keyword)).slice(0, 6);
         renderResults(matches);
       };
 
@@ -194,6 +208,7 @@
   }
 
   function bindTocHighlight() {
+    if (document.documentElement.dataset.boundTocFor === window.location.pathname) return;
     const tocLinks = Array.from(document.querySelectorAll('.toc a[href^="#"]'));
     if (tocLinks.length === 0 || !("IntersectionObserver" in window)) return;
     const sections = tocLinks.map((link) => document.querySelector(link.getAttribute("href"))).filter(Boolean);
@@ -204,6 +219,7 @@
       });
     }, { rootMargin: "-24% 0px -60% 0px", threshold: 0.1 });
     sections.forEach((section) => observer.observe(section));
+    document.documentElement.dataset.boundTocFor = window.location.pathname;
   }
 
   function bindCopyButtons() {
@@ -228,10 +244,16 @@
     });
   }
 
-  applyTheme(getStoredThemeMode());
-  bindThemeToggle();
+  function initPage() {
+    applyTheme(getStoredThemeMode());
+    bindThemeToggle();
+    bindHeaderSearch();
+    bindTocHighlight();
+    bindCopyButtons();
+  }
+
   bindSystemThemeListener();
-  bindHeaderSearch();
-  bindTocHighlight();
-  bindCopyButtons();
+  initPage();
+  document.addEventListener("astro:page-load", initPage);
+  document.addEventListener("astro:after-swap", () => applyTheme(getStoredThemeMode()));
 })();
