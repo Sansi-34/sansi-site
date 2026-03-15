@@ -1,15 +1,20 @@
-ï»¿---
+---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { homeHero, oldPosts, upcomingTracks } from "../data/site";
-import { getResearchTracks } from "../utils/content";
+import { getNoteSummary } from "../utils/content";
 import { getSearchIndex } from "../utils/search";
 
 const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 const searchIndex = getSearchIndex(notes);
-const researchTracks = getResearchTracks(notes).filter((item) => item.kicker !== "ç¡¬ä»¶").slice(0, 3);
+const latestNotes = notes.slice(0, 3);
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+});
 ---
-<BaseLayout title="æ—§æ–‡æ‹¾å›" description="è®°å½• C++ã€åµŒå…¥å¼ã€PCB æ‰“æ¿ä¸ AR å›¾å½¢å®è·µï¼ŒæŒç»­æ•´ç†ç¡®å®šæ€§ã€éªŒè¯é“¾è·¯ä¸æ€§èƒ½é¢„ç®—ã€‚" currentPath="/" searchIndex={searchIndex}>
+<BaseLayout title="¾ÉÎÄÊ°»Ø" description="¼ÇÂ¼ C++¡¢Ç¶ÈëÊ½¡¢PCB ´ò°åÓë AR Í¼ĞÎÊµ¼ù£¬³ÖĞøÕûÀíÈ·¶¨ĞÔ¡¢ÑéÖ¤Á´Â·ÓëĞÔÄÜÔ¤Ëã¡£" currentPath="/" searchIndex={searchIndex}>
   <section class="hero page-intro page-intro-home">
     <p class="eyebrow">{homeHero.eyebrow}</p>
     <h1><span>{homeHero.titleLines[0]}</span><br /><span>{homeHero.titleLines[1]}</span></h1>
@@ -38,16 +43,19 @@ const researchTracks = getResearchTracks(notes).filter((item) => item.kicker !==
 
   <section class="content-block">
     <div class="section-heading">
-      <p class="eyebrow">ç«™å†…å…ˆç«‹ä½çš„</p>
-      <h2>å…ˆæŠŠå·²ç»å†™ä¸‹æ¥çš„è¿™å‡ ç¯‡æ”¾ä¸Šæ¥</h2>
+      <p class="eyebrow">×îĞÂÎÄÕÂ</p>
+      <h2>ÒÔºóÄã·¢³öÀ´µÄ£¬»áÏÈÂäµ½ÕâÀï¡£</h2>
     </div>
     <div class="feature-grid">
-      {researchTracks.map((item) => (
+      {latestNotes.map((note) => (
         <article class="feature-card">
-          <p class="card-kicker">{item.kicker}</p>
-          <h3><a href={item.href}>{item.title}</a></h3>
-          <p>{item.summary}</p>
-          <div class="meta-row"><span>{item.meta}</span></div>
+          <p class="card-kicker">{note.data.kicker}</p>
+          <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+          <p>{getNoteSummary(note)}</p>
+          <div class="meta-row">
+            <span>{dateFormatter.format(note.data.date)}</span>
+            <span>{note.data.readingTime}</span>
+          </div>
         </article>
       ))}
     </div>
@@ -55,8 +63,8 @@ const researchTracks = getResearchTracks(notes).filter((item) => item.kicker !==
 
   <section class="content-block">
     <div class="section-heading">
-      <p class="eyebrow">æ¥ä¸‹æ¥ä¼šæ…¢æ…¢è¡¥çš„</p>
-      <h2>è¿™äº›æ–¹å‘ï¼Œåé¢ä¼šä¸€ç¯‡ç¯‡å†™å‡ºæ¥</h2>
+      <p class="eyebrow">½ÓÏÂÀ´»áÂıÂı²¹µÄ</p>
+      <h2>ÕâĞ©·½Ïò£¬ºóÃæ»áÒ»ÆªÆªĞ´³öÀ´</h2>
     </div>
     <div class="card-list">
       {upcomingTracks.map((item) => (
