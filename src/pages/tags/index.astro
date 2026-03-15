@@ -1,19 +1,27 @@
 ﻿---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getTagStats, getResearchTracks } from "../../utils/content";
+import { getNoteSummary, getPublishedNotes, getTagStats, slugifyTag } from "../../utils/content";
 import { getSearchIndex } from "../../utils/search";
 
-const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const allNotes = await getCollection("notes");
+const notes = getPublishedNotes(allNotes);
 const searchIndex = getSearchIndex(notes);
 const tagStats = getTagStats(notes);
-const featured = getResearchTracks(notes).filter((item) => item.meta !== "后面会补").slice(0, 3);
+const featuredTags = tagStats.slice(0, 3).map((tag) => {
+  const latestNote = notes.find((note) => note.data.tags.some((label) => slugifyTag(label) === tag.slug));
+
+  return {
+    ...tag,
+    latestNote
+  };
+});
 ---
 <BaseLayout title="标签检索" description="通过标签和主题簇快速定位系统、硬件与图形相关记录。" currentPath="/tags" searchIndex={searchIndex}>
   <section class="section-heading page-intro page-intro-compact">
     <p class="eyebrow">标签</p>
     <h1>先按关键词把路找出来。</h1>
-    <p class="section-copy">这里的标签和数量都跟着站内笔记走。你先按词找，再进具体内容。</p>
+    <p class="section-copy">这里的标签、数量和入口都跟着已发布笔记走。你先按词找，再进具体内容。</p>
   </section>
 
   <section class="content-block">
@@ -34,15 +42,15 @@ const featured = getResearchTracks(notes).filter((item) => item.meta !== "后面
   <section class="content-block">
     <div class="section-heading">
       <p class="eyebrow">常用入口</p>
-      <h2>先从现在已经有内容的方向开始</h2>
+      <h2>先从现在内容最多的几条线开始</h2>
     </div>
     <div class="feature-grid">
-      {featured.map((item) => (
+      {featuredTags.map((item) => (
         <article class="feature-card">
-          <p class="card-kicker">{item.kicker}</p>
-          <h3><a href={item.href}>{item.title}</a></h3>
-          <p>{item.summary}</p>
-          <div class="meta-row"><span>{item.meta}</span></div>
+          <p class="card-kicker">标签</p>
+          <h3><a href={`/tags/${item.slug}`}>{item.label}</a></h3>
+          <p>{item.latestNote ? `现在有 ${item.count} 篇，最近一篇是《${item.latestNote.data.title}》。` : `现在有 ${item.count} 篇站内笔记。`}</p>
+          {item.latestNote && <div class="meta-row"><span>{getNoteSummary(item.latestNote)}</span></div>}
         </article>
       ))}
     </div>

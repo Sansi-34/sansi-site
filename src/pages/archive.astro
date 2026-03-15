@@ -2,18 +2,26 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { oldPosts } from "../data/site";
-import { getResearchTracks } from "../utils/content";
+import { getFeaturedNotes, getLatestNotes, getNoteSummary, getPublishedNotes } from "../utils/content";
 import { getSearchIndex } from "../utils/search";
 
-const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const allNotes = await getCollection("notes");
+const notes = getPublishedNotes(allNotes);
 const searchIndex = getSearchIndex(notes);
-const researchTracks = getResearchTracks(notes);
+const featuredBase = getFeaturedNotes(notes, 3);
+const featuredFill = getLatestNotes(notes, 3, { excludeIds: featuredBase.map((note) => note.id) });
+const featuredNotes = [...featuredBase, ...featuredFill].slice(0, 3);
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+});
 ---
 <BaseLayout title="专题归档" description="按方向浏览底层系统、PCB 硬件与 AR 图形实践，再进入对应笔记查看细节。" currentPath="/archive" searchIndex={searchIndex}>
   <section class="section-heading page-intro page-intro-compact">
     <p class="eyebrow">专题</p>
     <h1>先把以前写过的和已经写下来的摆出来。</h1>
-    <p class="section-copy">以前写过的先收回来，站内已经写下来的先立住。硬件这条线还没补齐，但也不会躲着不写。</p>
+    <p class="section-copy">旧文继续保留原入口，站内笔记按时间和精选规则自己长出来。以后这里主要看真实内容，不再看说明卡。</p>
   </section>
 
   <section class="content-block">
@@ -36,16 +44,43 @@ const researchTracks = getResearchTracks(notes);
 
   <section class="content-block">
     <div class="section-heading">
-      <p class="eyebrow">站内笔记</p>
-      <h2>已经先写下来的，先从这里看</h2>
+      <p class="eyebrow">精选文章</p>
+      <h2>想先看重点，就从这几篇开始。</h2>
     </div>
     <div class="feature-grid">
-      {researchTracks.map((item) => (
+      {featuredNotes.map((note) => (
         <article class="feature-card">
-          <p class="card-kicker">{item.kicker}</p>
-          <h3><a href={item.href}>{item.title}</a></h3>
-          <p>{item.summary}</p>
-          <div class="meta-row"><span>{item.meta}</span></div>
+          <p class="card-kicker">{note.data.featured ? "精选" : "最新补位"}</p>
+          <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+          <p>{getNoteSummary(note)}</p>
+          <div class="meta-row">
+            <span>{dateFormatter.format(note.data.date)}</span>
+            <span>{note.data.readingTime}</span>
+            <span>{note.data.category}</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="content-block">
+    <div class="section-heading">
+      <p class="eyebrow">全部站内笔记</p>
+      <h2>已经发出来的，都按时间排在这里。</h2>
+    </div>
+    <div class="archive-list">
+      {notes.map((note) => (
+        <article class="archive-item">
+          <div class="small-meta">{dateFormatter.format(note.data.date)}</div>
+          <div>
+            <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+            <p>{getNoteSummary(note)}</p>
+            <div class="meta-row">
+              <span>{note.data.featured ? "精选" : "最新"}</span>
+              <span>{note.data.readingTime}</span>
+              <span>{note.data.category}</span>
+            </div>
+          </div>
         </article>
       ))}
     </div>

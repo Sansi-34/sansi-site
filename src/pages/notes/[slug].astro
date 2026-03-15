@@ -1,7 +1,7 @@
 ﻿---
 import { getCollection, render } from "astro:content";
-import { getNoteSummary, slugifyTag } from "../../utils/content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getNoteSummary, getPrevNextNotes, getPublishedNotes, getRelatedNotes, slugifyTag } from "../../utils/content";
 import { getSearchIndex } from "../../utils/search";
 
 export async function getStaticPaths() {
@@ -9,17 +9,24 @@ export async function getStaticPaths() {
   return notes.map((note) => ({ params: { slug: note.id } }));
 }
 
-const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const allNotes = await getCollection("notes");
+const notes = getPublishedNotes(allNotes);
 const searchIndex = getSearchIndex(notes);
 const { slug } = Astro.params;
 const note = notes.find((item) => item.id === slug);
+
 if (!note) {
   throw new Error(`Note not found: ${slug}`);
 }
-const relatedNotes = note.data.related
-  .map((relatedSlug) => notes.find((item) => item.id === relatedSlug))
-  .filter(Boolean);
+
+const { previous, next } = getPrevNextNotes(notes, note.id);
+const relatedNotes = getRelatedNotes(notes, note, 3);
 const { Content, headings } = await render(note);
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+});
 ---
 <BaseLayout title={note.data.title} description={note.data.description} currentPath="/tags" searchIndex={searchIndex}>
   <p class="breadcrumb">笔记</p>
@@ -30,7 +37,7 @@ const { Content, headings } = await render(note);
         <p class="eyebrow">{note.data.kicker}</p>
         <h1>{note.data.title}</h1>
         <div class="meta-row">
-          <span>{note.data.date.toISOString().slice(0, 10)}</span>
+          <span>{dateFormatter.format(note.data.date)}</span>
           <span>{note.data.readingTime}</span>
           <span>{note.data.category}</span>
           {note.data.tags.map((tag) => <a class="tag" href={`/tags/${slugifyTag(tag)}`}>{tag}</a>)}
@@ -52,17 +59,42 @@ const { Content, headings } = await render(note);
     </aside>
   </div>
 
+  {(previous || next) && (
+    <section class="content-block">
+      <div class="section-heading">
+        <p class="eyebrow">阅读链路</p>
+        <h2>接着往下看</h2>
+      </div>
+      <div class="article-nav-grid">
+        {previous && (
+          <article class="feature-card article-nav-card">
+            <p class="card-kicker">上一篇</p>
+            <h3><a href={`/notes/${previous.id}/`}>{previous.data.title}</a></h3>
+            <p>{getNoteSummary(previous)}</p>
+          </article>
+        )}
+        {next && (
+          <article class="feature-card article-nav-card">
+            <p class="card-kicker">下一篇</p>
+            <h3><a href={`/notes/${next.id}/`}>{next.data.title}</a></h3>
+            <p>{getNoteSummary(next)}</p>
+          </article>
+        )}
+      </div>
+    </section>
+  )}
+
   {relatedNotes.length > 0 && (
     <section class="content-block">
       <div class="section-heading">
         <p class="eyebrow">相关文章</p>
-        <h2>继续阅读</h2>
+        <h2>继续顺着这条线看</h2>
       </div>
       <div class="feature-grid">
-        {relatedNotes.map((item) => item && (
+        {relatedNotes.map((item) => (
           <article class="feature-card">
             <p class="card-kicker">{item.data.category}</p>
-            <h3><a href={`/notes/${item.id}`}>{item.data.title}</a></h3>
+            <h3><a href={`/notes/${item.id}/`}>{item.data.title}</a></h3>
             <p>{getNoteSummary(item)}</p>
           </article>
         ))}

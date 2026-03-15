@@ -1,15 +1,16 @@
 ﻿---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getNoteSummary, getPublishedNotes, getTagStats, slugifyTag, tagLabelFromSlug } from "../../utils/content";
 import { getSearchIndex } from "../../utils/search";
-import { getTagStats, slugifyTag, tagLabelFromSlug } from "../../utils/content";
 
 export async function getStaticPaths() {
   const notes = await getCollection("notes", ({ data }) => !data.draft);
   return getTagStats(notes).map((tag) => ({ params: { slug: tag.slug } }));
 }
 
-const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const allNotes = await getCollection("notes");
+const notes = getPublishedNotes(allNotes);
 const searchIndex = getSearchIndex(notes);
 const { slug } = Astro.params;
 const label = tagLabelFromSlug(slug!, notes);
@@ -38,12 +39,10 @@ const description = `聚合 ${title} 相关的站内笔记与记录。`;
           <div class="small-meta">{note.data.date.toISOString().slice(0, 10)}</div>
           <div>
             <h3><a href={`/notes/${note.id}`}>{note.data.title}</a></h3>
-            <p>{note.data.excerpt}</p>
+            <p>{getNoteSummary(note)}</p>
           </div>
         </article>
       ))}
     </div>
   </section>
 </BaseLayout>
-
-

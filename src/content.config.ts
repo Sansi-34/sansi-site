@@ -17,6 +17,7 @@ const notes = defineCollection({
     tags: z.array(z.string()).min(1),
     related: z.array(z.string()).default([]),
     keywords: z.array(z.string()).default([]),
+    featured: z.boolean().default(false),
     draft: z.boolean().default(false)
   })
 });

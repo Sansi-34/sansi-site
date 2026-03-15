@@ -1,13 +1,17 @@
 ﻿---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { homeHero, oldPosts, upcomingTracks } from "../data/site";
-import { getNoteSummary } from "../utils/content";
+import { homeHero, oldPosts } from "../data/site";
+import { getFeaturedNotes, getLatestNotes, getNoteSummary, getPublishedNotes } from "../utils/content";
 import { getSearchIndex } from "../utils/search";
 
-const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const allNotes = await getCollection("notes");
+const notes = getPublishedNotes(allNotes);
 const searchIndex = getSearchIndex(notes);
-const latestNotes = notes.slice(0, 3);
+const featuredBase = getFeaturedNotes(notes, 3);
+const featuredFill = getLatestNotes(notes, 3, { excludeIds: featuredBase.map((note) => note.id) });
+const featuredNotes = [...featuredBase, ...featuredFill].slice(0, 3);
+const latestNotes = getLatestNotes(notes, 3, { excludeIds: featuredNotes.map((note) => note.id) });
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   year: "numeric",
   month: "2-digit",
@@ -24,56 +28,68 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
     </p>
     <div class="hero-actions hero-actions-home gap-4">
       <a class="button button-primary" href={homeHero.primaryCta.href}>{homeHero.primaryCta.label}</a>
-      <a class="button button-quiet" href={homeHero.secondaryCta.href}>{homeHero.secondaryCta.label}</a>
+      <a class="button button-quiet" href="/tags">先看站内已经写下来的</a>
     </div>
-  </section>
-
-  <section class="feature-grid feature-grid-home">
-    {oldPosts.map((item, index) => (
-      <article class:list={["feature-card", "flex", "flex-col", "h-full", index === 0 && "feature-card-large"]}>
-        <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{item.label}</p>
-        {index === 0 ? <h2><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h2> : <h3><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h3>}
-        <p>{item.summary}</p>
-        <div class="meta-row mt-auto">
-          {item.meta.map((entry) => <span>{entry}</span>)}
-        </div>
-      </article>
-    ))}
   </section>
 
   <section class="content-block">
     <div class="section-heading">
-      <p class="eyebrow">最新文章</p>
-      <h2>以后你发出来的，会先落到这里。</h2>
+      <p class="eyebrow">精选文章</p>
+      <h2>先看这些，能更快摸到这站现在的骨架。</h2>
+      <p class="section-copy">首页以后不再手工摆展示位。你把文章标成 `featured: true`，它就会优先落到这里。</p>
     </div>
-    <div class="feature-grid">
-      {latestNotes.map((note) => (
-        <article class="feature-card">
-          <p class="card-kicker">{note.data.kicker}</p>
-          <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+    <div class="feature-grid feature-grid-home">
+      {featuredNotes.map((note, index) => (
+        <article class:list={["feature-card", "flex", "flex-col", "h-full", index === 0 && "feature-card-large"]}>
+          <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{note.data.featured ? "精选文章" : "最新补位"}</p>
+          {index === 0 ? <h2><a href={`/notes/${note.id}/`}>{note.data.title}</a></h2> : <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>}
           <p>{getNoteSummary(note)}</p>
-          <div class="meta-row">
+          <div class="meta-row mt-auto">
             <span>{dateFormatter.format(note.data.date)}</span>
             <span>{note.data.readingTime}</span>
+            <span>{note.data.category}</span>
           </div>
         </article>
       ))}
     </div>
   </section>
 
+  {latestNotes.length > 0 && (
+    <section class="content-block">
+      <div class="section-heading">
+        <p class="eyebrow">最新文章</p>
+        <h2>新写出来的，会按时间先落到这里。</h2>
+      </div>
+      <div class="feature-grid">
+        {latestNotes.map((note) => (
+          <article class="feature-card">
+            <p class="card-kicker">{note.data.kicker}</p>
+            <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+            <p>{getNoteSummary(note)}</p>
+            <div class="meta-row">
+              <span>{dateFormatter.format(note.data.date)}</span>
+              <span>{note.data.readingTime}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
   <section class="content-block">
     <div class="section-heading">
-      <p class="eyebrow">接下来会慢慢补的</p>
-      <h2>这些方向，后面会一篇篇写出来</h2>
+      <p class="eyebrow">以前写过</p>
+      <h2>过去写过的，先从原文入口收回来。</h2>
     </div>
-    <div class="card-list">
-      {upcomingTracks.map((item) => (
-        <article class="project-card">
-          <div>
-            <p class="card-kicker">{item.kicker}</p>
-            <h3>{item.title}</h3>
+    <div class="feature-grid feature-grid-home">
+      {oldPosts.map((item, index) => (
+        <article class:list={["feature-card", "flex", "flex-col", "h-full", index === 0 && "feature-card-large"]}>
+          <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{item.label}</p>
+          {index === 0 ? <h2><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h2> : <h3><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h3>}
+          <p>{item.summary}</p>
+          <div class="meta-row mt-auto">
+            {item.meta.map((entry) => <span>{entry}</span>)}
           </div>
-          <span class="card-link">{item.status}</span>
         </article>
       ))}
     </div>

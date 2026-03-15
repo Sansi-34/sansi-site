@@ -2,6 +2,33 @@
 
 export type NoteEntry = CollectionEntry<"notes">;
 
+type LatestNotesOptions = {
+  excludeIds?: string[];
+};
+
+const zhCollator = new Intl.Collator("zh-CN");
+
+function compareNotesByDateDesc(a: NoteEntry, b: NoteEntry) {
+  return b.data.date.getTime() - a.data.date.getTime();
+}
+
+function dedupeNotes(notes: NoteEntry[]) {
+  const seen = new Set<string>();
+  return notes.filter((note) => {
+    if (seen.has(note.id)) {
+      return false;
+    }
+
+    seen.add(note.id);
+    return true;
+  });
+}
+
+function getSharedTagCount(current: NoteEntry, candidate: NoteEntry) {
+  const currentTags = new Set(current.data.tags);
+  return candidate.data.tags.reduce((count, tag) => count + (currentTags.has(tag) ? 1 : 0), 0);
+}
+
 export function slugifyTag(label: string) {
   const map: Record<string, string> = {
     "底层系统": "systems",
@@ -12,10 +39,67 @@ export function slugifyTag(label: string) {
     "AR": "ar",
     "图形": "graphics",
     "渲染": "rendering",
-    "C++": "cpp"
+    "C++": "cpp",
+    "关于": "about",
+    "站点": "site"
   };
 
   return map[label] || label.toLowerCase().replace(/\s+/g, "-");
+}
+
+export function getPublishedNotes(notes: NoteEntry[]) {
+  return [...notes].filter((note) => !note.data.draft).sort(compareNotesByDateDesc);
+}
+
+export function getFeaturedNotes(notes: NoteEntry[], limit = 3) {
+  return getPublishedNotes(notes)
+    .filter((note) => note.data.featured)
+    .slice(0, limit);
+}
+
+export function getLatestNotes(notes: NoteEntry[], limit = 3, options: LatestNotesOptions = {}) {
+  const excluded = new Set(options.excludeIds ?? []);
+  return getPublishedNotes(notes)
+    .filter((note) => !excluded.has(note.id))
+    .slice(0, limit);
+}
+
+export function getPrevNextNotes(notes: NoteEntry[], currentId: string) {
+  const publishedNotes = getPublishedNotes(notes);
+  const currentIndex = publishedNotes.findIndex((note) => note.id === currentId);
+
+  if (currentIndex === -1) {
+    return { previous: undefined, next: undefined };
+  }
+
+  return {
+    previous: currentIndex > 0 ? publishedNotes[currentIndex - 1] : undefined,
+    next: currentIndex < publishedNotes.length - 1 ? publishedNotes[currentIndex + 1] : undefined
+  };
+}
+
+export function getRelatedNotes(notes: NoteEntry[], current: NoteEntry, limit = 3) {
+  const publishedNotes = getPublishedNotes(notes);
+  const relatedMap = new Map(publishedNotes.map((note) => [note.id, note]));
+  const manualRelated = current.data.related
+    .map((slug) => relatedMap.get(slug))
+    .filter((note): note is NoteEntry => Boolean(note) && note.id !== current.id);
+
+  const excluded = new Set([current.id, ...manualRelated.map((note) => note.id)]);
+  const candidates = publishedNotes.filter((note) => !excluded.has(note.id));
+
+  const sameTagNotes = candidates
+    .filter((note) => getSharedTagCount(current, note) > 0)
+    .sort((a, b) => {
+      const diff = getSharedTagCount(current, b) - getSharedTagCount(current, a);
+      return diff !== 0 ? diff : compareNotesByDateDesc(a, b);
+    });
+
+  const sameCategoryNotes = candidates
+    .filter((note) => note.data.category === current.data.category)
+    .sort(compareNotesByDateDesc);
+
+  return dedupeNotes([...manualRelated, ...sameTagNotes, ...sameCategoryNotes]).slice(0, limit);
 }
 
 export function getNoteSummary(note: NoteEntry) {
@@ -23,7 +107,7 @@ export function getNoteSummary(note: NoteEntry) {
 }
 
 export function tagLabelFromSlug(slug: string, notes: NoteEntry[]) {
-  const found = notes
+  const found = getPublishedNotes(notes)
     .flatMap((note) => note.data.tags)
     .find((tag) => slugifyTag(tag) === slug);
 
@@ -33,7 +117,7 @@ export function tagLabelFromSlug(slug: string, notes: NoteEntry[]) {
 export function getTagStats(notes: NoteEntry[]) {
   const counts = new Map<string, number>();
 
-  notes.forEach((note) => {
+  getPublishedNotes(notes).forEach((note) => {
     new Set(note.data.tags).forEach((tag) => {
       counts.set(tag, (counts.get(tag) || 0) + 1);
     });
@@ -41,12 +125,13 @@ export function getTagStats(notes: NoteEntry[]) {
 
   return Array.from(counts.entries())
     .map(([label, count]) => ({ label, count, slug: slugifyTag(label) }))
-    .sort((a, b) => (b.count !== a.count ? b.count - a.count : a.label.localeCompare(b.label, "zh-CN")));
+    .sort((a, b) => (b.count !== a.count ? b.count - a.count : zhCollator.compare(a.label, b.label)));
 }
 
 export function getResearchTracks(notes: NoteEntry[]) {
+  const publishedNotes = getPublishedNotes(notes);
   const withTag = (targets: string[]) =>
-    notes.filter((note) => note.data.tags.some((tag) => targets.includes(tag)) || targets.includes(note.data.category));
+    publishedNotes.filter((note) => note.data.tags.some((tag) => targets.includes(tag)) || targets.includes(note.data.category));
 
   const systemNotes = withTag(["底层系统", "C++", "嵌入式", "系统", "系统启动"]);
   const toolNotes = withTag(["工具链", "调试", "工具链"]);
@@ -86,12 +171,10 @@ export function getResearchTracks(notes: NoteEntry[]) {
 }
 
 export function buildSearchIndex(notes: NoteEntry[]) {
-  const tags = getTagStats(notes).map((item) => ({
+  return getTagStats(notes).map((item) => ({
     title: `${item.label} (${item.count})`,
     meta: "标签 / 主题检索",
     url: `/tags/${item.slug}`,
     keywords: [item.label, "标签", "主题"]
   }));
-
-  return tags;
 }
