@@ -21,20 +21,20 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
 });
 ---
 <BaseLayout title="旧文拾回" description="记录 C++、嵌入式、PCB 打板与 AR 图形实践，持续整理确定性、验证链路与性能预算。" currentPath="/" searchIndex={searchIndex}>
-  <section class="hero page-intro page-intro-home">
+  <section class="hero page-intro page-intro-home home-hero">
     <p class="eyebrow">{homeHero.eyebrow}</p>
     <h1><span>{homeHero.titleLines[0]}</span><br /><span>{homeHero.titleLines[1]}</span></h1>
-    <p class="hero-copy hero-copy-compact leading-relaxed text-gray-500 max-w-2xl mt-4">
+    <p class="hero-copy hero-copy-compact leading-relaxed text-gray-500 max-w-2xl mt-4 home-hero-note">
       <span>{homeHero.noteLines[0]}</span>
       <span>{homeHero.noteLines[1]}</span>
     </p>
-    <div class="hero-actions hero-actions-home gap-4">
+    <div class="hero-actions hero-actions-home gap-4 home-hero-actions">
       <a class="button button-primary" href={homeHero.primaryCta.href}>{homeHero.primaryCta.label}</a>
       <a class="button button-quiet" href="/notes">先看站内已经写下来的</a>
     </div>
   </section>
 
-  <section class="content-block content-block-home-emphasis">
+  <section class="content-block content-block-home-emphasis home-section home-section-featured">
     <div class="section-heading-row">
       <div class="section-heading">
         <p class="eyebrow">精选文章</p>
@@ -73,7 +73,7 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   </section>
 
   {latestNotes.length > 0 && (
-    <section class="content-block content-block-home-secondary">
+    <section class="content-block content-block-home-secondary home-section home-section-latest">
       <div class="section-heading-row">
         <div class="section-heading">
           <p class="eyebrow">最新文章</p>
@@ -89,7 +89,7 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
               <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
               <p>{getNoteSummary(note)}</p>
             </div>
-            <div class="meta-row">
+            <div class="meta-row latest-item-meta">
               <span>{dateFormatter.format(note.data.date)}</span>
               <span>{note.data.readingTime}</span>
               <span>{note.data.category}</span>
@@ -100,7 +100,7 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
     </section>
   )}
 
-  <section class="content-block content-block-home-archive">
+  <section class="content-block content-block-home-archive home-section home-section-legacy">
     <div class="section-heading-row">
       <div class="section-heading">
         <p class="eyebrow">以前写过</p>
@@ -116,7 +116,7 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
             <h3><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h3>
             <p>{item.summary}</p>
           </div>
-          <div class="meta-row">
+          <div class="meta-row old-post-meta">
             {item.meta.map((entry) => <span>{entry}</span>)}
           </div>
         </article>

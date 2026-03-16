@@ -2223,3 +2223,148 @@ html[data-theme="dark"] {
     font-size: 1rem;
   }
 }
+
+/* homepage and notes polish pass */
+.home-hero {
+  max-width: 44rem;
+  padding-bottom: 2.2rem;
+}
+
+.home-hero-note {
+  max-width: 27rem;
+  color: var(--muted-soft);
+}
+
+.home-hero-actions {
+  margin-top: 1rem;
+}
+
+.home-section + .home-section {
+  margin-top: 3.1rem;
+}
+
+.home-section .section-heading h2 {
+  max-width: 22ch;
+}
+
+.home-section-featured .section-heading .section-copy {
+  max-width: 34rem;
+}
+
+.home-section-featured .feature-card-lead {
+  border: 1px solid var(--line);
+  background: linear-gradient(165deg, var(--surface-solid) 0%, var(--surface-subtle) 100%);
+  box-shadow: var(--shadow-hover);
+}
+
+.home-section-featured .feature-stack .feature-card {
+  border: 1px solid var(--line);
+  background: var(--surface-subtle);
+  box-shadow: none;
+}
+
+.home-section-featured .feature-stack .feature-card:hover {
+  box-shadow: var(--shadow-soft);
+}
+
+.home-section-latest .section-heading {
+  max-width: 28rem;
+}
+
+.home-section-latest .latest-list {
+  border: 1px solid var(--line);
+  box-shadow: none;
+  background: var(--surface-subtle);
+}
+
+.home-section-latest .latest-item {
+  grid-template-columns: minmax(0, 1.3fr) auto;
+}
+
+.home-section-latest .latest-item-main h3 {
+  font-size: 1.03rem;
+}
+
+.home-section-latest .latest-item-meta {
+  gap: 0.7rem;
+  margin-top: 0;
+  justify-content: flex-end;
+}
+
+.home-section-legacy .old-posts-list {
+  border: 1px solid var(--line);
+  box-shadow: none;
+  background: var(--surface-subtle);
+}
+
+.home-section-legacy .old-post-item {
+  align-items: center;
+}
+
+.home-section-legacy .old-post-main h3 {
+  font-size: 1.02rem;
+}
+
+.home-section-legacy .old-post-meta {
+  gap: 0.6rem;
+  margin-top: 0;
+}
+
+.notes-glance {
+  border: 1px solid var(--line);
+  box-shadow: none;
+  background: linear-gradient(180deg, var(--surface-solid) 0%, var(--surface-subtle) 100%);
+}
+
+.notes-glance-main h2 {
+  max-width: 32ch;
+}
+
+.notes-glance-links .tag {
+  background: var(--surface);
+}
+
+.notes-index-main .year-group {
+  border-top: 1px solid var(--line);
+  padding-top: 1.15rem;
+}
+
+.notes-index-main .year-group:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.archive-item-note {
+  border: 1px solid var(--line);
+  background: var(--surface-subtle);
+  box-shadow: none;
+}
+
+.archive-item-note:hover {
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 768px) {
+  .home-hero {
+    padding-bottom: 1.4rem;
+  }
+
+  .home-section + .home-section {
+    margin-top: 2.15rem;
+  }
+
+  .home-section-featured .feature-card-lead,
+  .home-section-featured .feature-stack .feature-card,
+  .home-section-latest .latest-list,
+  .home-section-legacy .old-posts-list,
+  .notes-glance,
+  .archive-item-note {
+    box-shadow: none;
+  }
+
+  .home-section-latest .latest-item-meta,
+  .home-section-legacy .old-post-meta {
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+}
