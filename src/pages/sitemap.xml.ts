@@ -18,6 +18,7 @@ export async function GET() {
   const staticEntries = [
     urlEntry(`${siteMeta.siteUrl}/`),
     urlEntry(`${siteMeta.siteUrl}/archive/`),
+    urlEntry(`${siteMeta.siteUrl}/notes/`),
     urlEntry(`${siteMeta.siteUrl}/tags/`),
     urlEntry(`${siteMeta.siteUrl}/about/`),
     urlEntry(`${siteMeta.siteUrl}/rss.xml`)

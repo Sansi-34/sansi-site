@@ -16,6 +16,7 @@ export function getSearchIndex(notes: CollectionEntry<"notes">[]): SearchItem[] 
   const pages: SearchItem[] = [
     { title: "首页", meta: "页面 / 工程总览", url: "/", keywords: ["首页", "主页", "sansi", "工程笔记"] },
     { title: "专题", meta: "页面 / 旧文与站内笔记", url: "/archive", keywords: ["专题", "旧文", "归档"] },
+    { title: "全部笔记", meta: "页面 / 按时间浏览", url: "/notes", keywords: ["笔记", "全部文章", "时间线", "文章列表"] },
     { title: "标签", meta: "标签 / 主题检索", url: "/tags", keywords: ["标签", "检索", "系统", "图形"] },
     { title: "图形与 AR", meta: "标签 / 图形 / 追踪 / 渲染", url: "/tags/graphics", keywords: ["AR", "图形", "渲染", "追踪"] },
     { title: "关于 Sansi", meta: "页面 / 简介与方法", url: "/about", keywords: ["about", "sansi", "关于"] }

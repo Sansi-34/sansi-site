@@ -11,7 +11,7 @@
 export const navItems = [
   { label: "首页", href: "/" },
   { label: "专题", href: "/archive" },
-  { label: "笔记", href: "/tags" },
+  { label: "笔记", href: "/notes" },
   { label: "关于", href: "/about" }
 ] as const;
 
@@ -30,7 +30,6 @@ export const oldPosts = [
     href: "https://www.coolapk.com/feed/48604151?s=MGRlZmZjZGIxNTg5NzI3ZzY5YjU2MmFmega1580",
     label: "以前写过",
     meta: ["酷安旧文", "高中时期"],
-    featured: true,
     keywords: ["米环7", "救砖", "酷安", "手环", "恢复"]
   },
   {
@@ -121,4 +120,3 @@ export const contactInfo = {
 };
 
 export const footerText = "先把真的摆上来。";
-

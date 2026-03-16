@@ -10,13 +10,14 @@ interface Props {
   title: string;
   description: string;
   currentPath: string;
+  canonicalPath?: string;
   searchIndex?: unknown[];
 }
 
-const { title, description, currentPath, searchIndex = [] } = Astro.props;
+const { title, description, currentPath, canonicalPath = currentPath, searchIndex = [] } = Astro.props;
 const searchPayload = JSON.stringify(searchIndex).replace(/</g, "\\u003c");
 const pageTitle = `${siteMeta.titleSuffix} | ${title}`;
-const canonicalUrl = new URL(currentPath, siteMeta.siteUrl).toString();
+const canonicalUrl = new URL(canonicalPath, siteMeta.siteUrl).toString();
 const ogImageUrl = new URL(siteMeta.ogImagePath, siteMeta.siteUrl).toString();
 ---
 <!doctype html>

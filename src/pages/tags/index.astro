@@ -17,11 +17,18 @@ const featuredTags = tagStats.slice(0, 3).map((tag) => {
   };
 });
 ---
-<BaseLayout title="标签检索" description="通过标签和主题簇快速定位系统、硬件与图形相关记录。" currentPath="/tags" searchIndex={searchIndex}>
+<BaseLayout title="标签检索" description="通过标签和主题簇快速定位系统、硬件与图形相关记录。" currentPath="/notes" canonicalPath="/tags/" searchIndex={searchIndex}>
   <section class="section-heading page-intro page-intro-compact">
     <p class="eyebrow">标签</p>
     <h1>先按关键词把路找出来。</h1>
     <p class="section-copy">这里的标签、数量和入口都跟着已发布笔记走。你先按词找，再进具体内容。</p>
+  </section>
+
+  <section class="content-block">
+    <div class="tags">
+      <a class="tag" href="/notes">全部笔记</a>
+      <a class="tag is-active" href="/tags">全部标签</a>
+    </div>
   </section>
 
   <section class="content-block">

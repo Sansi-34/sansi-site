@@ -18,7 +18,7 @@ const filteredNotes = notes.filter((note) => note.data.tags.some((tag) => slugif
 const title = label === "graphics" ? "图形与 AR" : label;
 const description = `聚合 ${title} 相关的站内笔记与记录。`;
 ---
-<BaseLayout title={String(title)} description={description} currentPath="/tags" searchIndex={searchIndex}>
+<BaseLayout title={String(title)} description={description} currentPath="/notes" canonicalPath={`/tags/${slug}/`} searchIndex={searchIndex}>
   <section class="section-heading page-intro page-intro-compact">
     <p class="eyebrow">标签</p>
     <h1>{title}</h1>
@@ -27,6 +27,7 @@ const description = `聚合 ${title} 相关的站内笔记与记录。`;
 
   <section class="content-block">
     <div class="tags">
+      <a class="tag" href="/notes">全部笔记</a>
       <a class="tag" href="/tags">全部标签</a>
       <a class="tag is-active" href={`/tags/${slug}`}>{title}</a>
     </div>

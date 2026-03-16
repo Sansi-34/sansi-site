@@ -1,0 +1,52 @@
+﻿---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getNoteSummary, getPublishedNotes, getTagStats } from "../../utils/content";
+import { getSearchIndex } from "../../utils/search";
+
+const allNotes = await getCollection("notes");
+const notes = getPublishedNotes(allNotes);
+const searchIndex = getSearchIndex(notes);
+const tagStats = getTagStats(notes).slice(0, 8);
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+});
+---
+<BaseLayout title="全部笔记" description="按发布时间顺着看 Sansi 已经写下来的全部站内笔记。" currentPath="/notes" canonicalPath="/notes/" searchIndex={searchIndex}>
+  <section class="section-heading page-intro page-intro-compact">
+    <p class="eyebrow">笔记</p>
+    <h1>先按时间，把已经写下来的全摆出来。</h1>
+    <p class="section-copy">这里不分专题，不先筛标签，就按发布时间往下看。想按问题线索找，也可以直接走标签页。</p>
+  </section>
+
+  <section class="content-block">
+    <div class="tags">
+      <a class="tag is-active" href="/notes">全部笔记 ({notes.length})</a>
+      <a class="tag" href="/tags">去看标签</a>
+      {tagStats.map((tag) => (
+        <a class="tag" href={`/tags/${tag.slug}`}>{tag.label} ({tag.count})</a>
+      ))}
+    </div>
+  </section>
+
+  <section class="content-block">
+    <div class="archive-list">
+      {notes.map((note) => (
+        <article class="archive-item">
+          <div class="small-meta">{dateFormatter.format(note.data.date)}</div>
+          <div>
+            <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+            <p>{getNoteSummary(note)}</p>
+            <div class="meta-row">
+              <span>{note.data.featured ? "精选" : "已发布"}</span>
+              <span>{note.data.readingTime}</span>
+              <span>{note.data.category}</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

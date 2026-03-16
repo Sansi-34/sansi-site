@@ -28,7 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   day: "2-digit"
 });
 ---
-<BaseLayout title={note.data.title} description={note.data.description} currentPath="/tags" searchIndex={searchIndex}>
+<BaseLayout title={note.data.title} description={note.data.description} currentPath="/notes" canonicalPath={`/notes/${note.id}/`} searchIndex={searchIndex}>
   <p class="breadcrumb">笔记</p>
 
   <div class="layout-post">
