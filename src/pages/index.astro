@@ -21,9 +21,7 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
 });
 ---
 <BaseLayout title="旧文拾回" description="记录 C++、嵌入式、PCB 打板与 AR 图形实践，持续整理确定性、验证链路与性能预算。" currentPath="/" searchIndex={searchIndex}>
-  <section class="hero page-intro page-intro-home home-hero">
-    <p class="eyebrow">{homeHero.eyebrow}</p>
-    <h1><span>{homeHero.titleLines[0]}</span><br /><span>{homeHero.titleLines[1]}</span></h1>
+  <section class="hero page-intro page-intro-home home-hero">    <h1><span>{homeHero.titleLines[0]}</span><br /><span>{homeHero.titleLines[1]}</span></h1>
     <p class="hero-copy hero-copy-compact leading-relaxed text-gray-500 max-w-2xl mt-4 home-hero-note">
       <span>{homeHero.noteLines[0]}</span>
       <span>{homeHero.noteLines[1]}</span>
@@ -124,3 +122,4 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
     </div>
   </section>
 </BaseLayout>
+

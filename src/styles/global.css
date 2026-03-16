@@ -2564,3 +2564,27 @@ html[data-theme="dark"] {
     background: rgba(148, 163, 184, 0.12);
   }
 }
+
+/* mobile hero title tune */
+@media (max-width: 768px) {
+  .page-intro-home h1 {
+    max-width: 8.1ch;
+    font-size: clamp(2rem, 9.4vw, 2.5rem);
+    line-height: 1.03;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .page-intro-home h1 span {
+    display: block;
+  }
+
+  .page-intro-home h1 span + span {
+    margin-top: 0.08em;
+  }
+
+  .home-hero-note,
+  .page-intro-home .hero-copy {
+    margin-top: 0.45rem;
+  }
+}
