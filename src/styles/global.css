@@ -2428,3 +2428,99 @@ html[data-theme="dark"] {
     max-width: 16ch;
   }
 }
+
+/* mobile nav refresh */
+@media (max-width: 768px) {
+  .site-header {
+    padding: 0.38rem 0.75rem 0.08rem;
+  }
+
+  .bottom-command-bar {
+    left: 0.72rem;
+    right: 0.72rem;
+    bottom: 0.62rem;
+    padding: 0.34rem calc(0.34rem + env(safe-area-inset-bottom));
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+    backdrop-filter: blur(14px);
+  }
+
+  html[data-theme="dark"] .bottom-command-bar {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(148, 163, 184, 0.26);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.34);
+  }
+
+  .bottom-command-shell {
+    display: block;
+  }
+
+  .bottom-command-nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.24rem;
+  }
+
+  .bottom-command-nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 0.35rem;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--muted);
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    animation: none;
+  }
+
+  .bottom-command-nav a.is-active,
+  .bottom-command-nav a[aria-current="page"] {
+    color: var(--text);
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  html[data-theme="dark"] .bottom-command-nav a.is-active,
+  html[data-theme="dark"] .bottom-command-nav a[aria-current="page"] {
+    background: rgba(30, 41, 59, 0.9);
+  }
+
+  .bottom-command-nav a:hover {
+    color: var(--text);
+    background: var(--surface);
+    transform: translateY(-1px);
+  }
+
+  .bottom-command-status,
+  .bottom-command-status-label,
+  .bottom-command-status-value {
+    display: none;
+  }
+
+  .page-shell {
+    padding-bottom: 5.25rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .bottom-command-bar {
+    left: 0.58rem;
+    right: 0.58rem;
+    bottom: 0.52rem;
+  }
+
+  .bottom-command-nav {
+    gap: 0.18rem;
+  }
+
+  .bottom-command-nav a {
+    min-height: 32px;
+    font-size: 0.74rem;
+    padding: 0 0.2rem;
+  }
+}
