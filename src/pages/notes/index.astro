@@ -9,6 +9,7 @@ const notes = getPublishedNotes(allNotes);
 const searchIndex = getSearchIndex(notes);
 const tagStats = getTagStats(notes).slice(0, 8);
 const latestNotes = notes.slice(0, 3);
+const featuredCount = notes.filter((note) => note.data.featured).length;
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   year: "numeric",
   month: "2-digit",
@@ -69,42 +70,64 @@ const notesByYear = Object.entries(
     </div>
 
     <aside class="notes-sidebar">
-      <div class="note-panel notes-sidebar-panel">
-        <p class="card-kicker">站内状态</p>
-        <h3>先从这几条线往下逛，会更顺一点。</h3>
-        <p>现在站内已经有 {notes.length} 篇已发布笔记，分布在 {notesByYear.length} 个年份分组里，常用标签先收在右边。</p>
-        <div class="meta-row">
-          <span>{notes.length} 篇笔记</span>
-          <span>{tagStats.length} 个常用标签</span>
+      <div class="notes-sidebar-shell panel">
+        <div class="notes-sidebar-hero">
+          <p class="card-kicker">内容索引</p>
+          <h3>这边不是装饰，是给你换条路往下看的。</h3>
+          <p>如果不想从第一页一路滚下去，可以先从最近、标签，或者专题入口里挑一条线。</p>
         </div>
-      </div>
 
-      <div class="note-panel notes-sidebar-panel">
-        <p class="card-kicker">最近写下的</p>
-        <div class="notes-sidebar-list">
-          {latestNotes.map((note) => (
-            <a class="notes-sidebar-link" href={`/notes/${note.id}/`}>
-              <strong>{note.data.title}</strong>
-              <span>{dateFormatter.format(note.data.date)} · {note.data.readingTime}</span>
-            </a>
-          ))}
+        <div class="notes-sidebar-metrics">
+          <div class="notes-metric-card">
+            <span class="notes-metric-value">{notes.length}</span>
+            <span class="notes-metric-label">已发布笔记</span>
+          </div>
+          <div class="notes-metric-card">
+            <span class="notes-metric-value">{featuredCount}</span>
+            <span class="notes-metric-label">首页精选</span>
+          </div>
+          <div class="notes-metric-card">
+            <span class="notes-metric-value">{tagStats.length}</span>
+            <span class="notes-metric-label">常用标签</span>
+          </div>
         </div>
-      </div>
 
-      <div class="note-panel notes-sidebar-panel">
-        <p class="card-kicker">常用标签</p>
-        <div class="tag-cloud">
-          {tagStats.map((tag) => (
-            <a class="tag-pill" href={`/tags/${tag.slug}`}>{tag.label}</a>
-          ))}
+        <div class="notes-sidebar-section">
+          <p class="card-kicker">最近写下的</p>
+          <div class="notes-sidebar-list">
+            {latestNotes.map((note) => (
+              <a class="notes-sidebar-link" href={`/notes/${note.id}/`}>
+                <strong>{note.data.title}</strong>
+                <span>{dateFormatter.format(note.data.date)} · {note.data.readingTime}</span>
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div class="note-panel notes-sidebar-panel notes-sidebar-links">
-        <p class="card-kicker">换条路看</p>
-        <a class="card-link" href="/archive">按专题看</a>
-        <a class="card-link" href="/tags">按标签找</a>
-        <a class="card-link" href="/about">先看关于</a>
+        <div class="notes-sidebar-section">
+          <p class="card-kicker">常用标签</p>
+          <div class="tag-cloud">
+            {tagStats.map((tag) => (
+              <a class="tag-pill" href={`/tags/${tag.slug}`}>{tag.label}</a>
+            ))}
+          </div>
+        </div>
+
+        <div class="notes-sidebar-section notes-sidebar-links">
+          <p class="card-kicker">换条路看</p>
+          <a class="notes-jump-link" href="/archive">
+            <strong>按专题看</strong>
+            <span>先按问题线和旧文入口往下逛</span>
+          </a>
+          <a class="notes-jump-link" href="/tags">
+            <strong>按标签找</strong>
+            <span>从关键词和主题词切进去</span>
+          </a>
+          <a class="notes-jump-link" href="/about">
+            <strong>先看关于</strong>
+            <span>想知道这站为什么这么写，可以先看这里</span>
+          </a>
+        </div>
       </div>
     </aside>
   </section>
