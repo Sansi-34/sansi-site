@@ -2588,3 +2588,28 @@ html[data-theme="dark"] {
     margin-top: 0.45rem;
   }
 }
+
+/* mobile hero title in one line */
+@media (max-width: 768px) {
+  .page-intro-home h1 {
+    max-width: none;
+    width: 100%;
+    font-size: clamp(1.46rem, 6.9vw, 2.02rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    text-wrap: nowrap;
+  }
+
+  .page-intro-home h1 br {
+    display: none;
+  }
+
+  .page-intro-home h1 span {
+    display: inline;
+  }
+
+  .page-intro-home h1 span + span {
+    margin-top: 0;
+  }
+}
