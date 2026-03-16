@@ -12,6 +12,8 @@ const featuredBase = getFeaturedNotes(notes, 3);
 const featuredFill = getLatestNotes(notes, 3, { excludeIds: featuredBase.map((note) => note.id) });
 const featuredNotes = [...featuredBase, ...featuredFill].slice(0, 3);
 const latestNotes = getLatestNotes(notes, 3, { excludeIds: featuredNotes.map((note) => note.id) });
+const leadFeatured = featuredNotes[0];
+const sideFeatured = featuredNotes.slice(1);
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   year: "numeric",
   month: "2-digit",
@@ -32,43 +34,63 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
     </div>
   </section>
 
-  <section class="content-block">
-    <div class="section-heading">
-      <p class="eyebrow">精选文章</p>
-      <h2>先看这些，能更快摸到这站现在的骨架。</h2>
-      <p class="section-copy">首页以后不再手工摆展示位。你把文章标成 `featured: true`，它就会优先落到这里。</p>
+  <section class="content-block content-block-home-emphasis">
+    <div class="section-heading-row">
+      <div class="section-heading">
+        <p class="eyebrow">精选文章</p>
+        <h2>先看这些，能更快摸到这站现在的骨架。</h2>
+        <p class="section-copy">这里优先放 <code>featured: true</code> 的文章。它们不是展示位，而是现在最值得先读的几篇。</p>
+      </div>
+      <a class="section-link" href="/notes">去看全部笔记</a>
     </div>
-    <div class="feature-grid feature-grid-home">
-      {featuredNotes.map((note, index) => (
-        <article class:list={["feature-card", "flex", "flex-col", "h-full", index === 0 && "feature-card-large"]}>
-          <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{note.data.featured ? "精选文章" : "最新补位"}</p>
-          {index === 0 ? <h2><a href={`/notes/${note.id}/`}>{note.data.title}</a></h2> : <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>}
-          <p>{getNoteSummary(note)}</p>
+    {leadFeatured && (
+      <div class="feature-grid feature-grid-home feature-grid-home-hero">
+        <article class="feature-card feature-card-large feature-card-lead flex flex-col h-full">
+          <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{leadFeatured.data.featured ? "精选文章" : "最新补位"}</p>
+          <h2><a href={`/notes/${leadFeatured.id}/`}>{leadFeatured.data.title}</a></h2>
+          <p>{getNoteSummary(leadFeatured)}</p>
           <div class="meta-row mt-auto">
-            <span>{dateFormatter.format(note.data.date)}</span>
-            <span>{note.data.readingTime}</span>
-            <span>{note.data.category}</span>
+            <span>{dateFormatter.format(leadFeatured.data.date)}</span>
+            <span>{leadFeatured.data.readingTime}</span>
+            <span>{leadFeatured.data.category}</span>
           </div>
         </article>
-      ))}
-    </div>
+        <div class="feature-stack">
+          {sideFeatured.map((note) => (
+            <article class="feature-card feature-card-compact flex flex-col h-full">
+              <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{note.data.featured ? "精选文章" : "最新补位"}</p>
+              <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+              <p>{getNoteSummary(note)}</p>
+              <div class="meta-row mt-auto">
+                <span>{dateFormatter.format(note.data.date)}</span>
+                <span>{note.data.readingTime}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    )}
   </section>
 
   {latestNotes.length > 0 && (
-    <section class="content-block">
-      <div class="section-heading">
-        <p class="eyebrow">最新文章</p>
-        <h2>新写出来的，会按时间先落到这里。</h2>
+    <section class="content-block content-block-home-secondary">
+      <div class="section-heading-row">
+        <div class="section-heading">
+          <p class="eyebrow">最新文章</p>
+          <h2>新写出来的，会先顺着时间落在这里。</h2>
+        </div>
+        <a class="section-link" href="/notes">按时间看全部笔记</a>
       </div>
-      <div class="feature-grid">
+      <div class="latest-stream">
         {latestNotes.map((note) => (
-          <article class="feature-card">
-            <p class="card-kicker">{note.data.kicker}</p>
+          <article class="feature-card latest-card">
+            <p class="card-kicker">最新文章</p>
             <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
             <p>{getNoteSummary(note)}</p>
             <div class="meta-row">
               <span>{dateFormatter.format(note.data.date)}</span>
               <span>{note.data.readingTime}</span>
+              <span>{note.data.category}</span>
             </div>
           </article>
         ))}
@@ -76,18 +98,23 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
     </section>
   )}
 
-  <section class="content-block">
-    <div class="section-heading">
-      <p class="eyebrow">以前写过</p>
-      <h2>过去写过的，先从原文入口收回来。</h2>
+  <section class="content-block content-block-home-archive">
+    <div class="section-heading-row">
+      <div class="section-heading">
+        <p class="eyebrow">以前写过</p>
+        <h2>过去写过的，先从原文入口慢慢收回来。</h2>
+      </div>
+      <a class="section-link" href="/archive">去看全部专题</a>
     </div>
-    <div class="feature-grid feature-grid-home">
-      {oldPosts.map((item, index) => (
-        <article class:list={["feature-card", "flex", "flex-col", "h-full", index === 0 && "feature-card-large"]}>
-          <p class="card-kicker bg-gray-100 text-gray-600 px-2 py-1.5 rounded-md text-xs font-medium inline-block mb-3">{item.label}</p>
-          {index === 0 ? <h2><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h2> : <h3><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h3>}
-          <p>{item.summary}</p>
-          <div class="meta-row mt-auto">
+    <div class="old-posts-list panel">
+      {oldPosts.map((item) => (
+        <article class="old-post-item">
+          <div class="old-post-main">
+            <p class="card-kicker">{item.label}</p>
+            <h3><a href={item.href} target="_blank" rel="noreferrer">{item.title}</a></h3>
+            <p>{item.summary}</p>
+          </div>
+          <div class="meta-row">
             {item.meta.map((entry) => <span>{entry}</span>)}
           </div>
         </article>
