@@ -13,6 +13,14 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   month: "2-digit",
   day: "2-digit"
 });
+const notesByYear = Object.entries(
+  notes.reduce<Record<string, typeof notes>>((groups, note) => {
+    const year = String(note.data.date.getFullYear());
+    groups[year] ??= [];
+    groups[year].push(note);
+    return groups;
+  }, {})
+).sort((a, b) => Number(b[0]) - Number(a[0]));
 ---
 <BaseLayout title="全部笔记" description="按发布时间顺着看 Sansi 已经写下来的全部站内笔记。" currentPath="/notes" canonicalPath="/notes/" searchIndex={searchIndex}>
   <section class="section-heading page-intro page-intro-compact">
@@ -31,22 +39,30 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
     </div>
   </section>
 
-  <section class="content-block">
-    <div class="archive-list">
-      {notes.map((note) => (
-        <article class="archive-item">
-          <div class="small-meta">{dateFormatter.format(note.data.date)}</div>
-          <div>
-            <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
-            <p>{getNoteSummary(note)}</p>
-            <div class="meta-row">
-              <span>{note.data.featured ? "精选" : "已发布"}</span>
-              <span>{note.data.readingTime}</span>
-              <span>{note.data.category}</span>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
+  <section class="content-block year-groups">
+    {notesByYear.map(([year, items]) => (
+      <div class="year-group">
+        <div class="year-group-head">
+          <p class="year-group-label">{year}</p>
+          <span class="year-group-count">{items.length} 篇</span>
+        </div>
+        <div class="archive-list">
+          {items.map((note) => (
+            <article class="archive-item">
+              <div class="small-meta">{dateFormatter.format(note.data.date)}</div>
+              <div>
+                <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+                <p>{getNoteSummary(note)}</p>
+                <div class="meta-row">
+                  <span>{note.data.featured ? "精选" : "已发布"}</span>
+                  <span>{note.data.readingTime}</span>
+                  <span>{note.data.category}</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    ))}
   </section>
 </BaseLayout>
