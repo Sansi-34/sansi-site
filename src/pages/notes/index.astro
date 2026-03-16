@@ -8,7 +8,6 @@ const allNotes = await getCollection("notes");
 const notes = getPublishedNotes(allNotes);
 const searchIndex = getSearchIndex(notes);
 const tagStats = getTagStats(notes).slice(0, 8);
-const latestNotes = notes.slice(0, 3);
 const featuredCount = notes.filter((note) => note.data.featured).length;
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   year: "numeric",
@@ -31,104 +30,65 @@ const notesByYear = Object.entries(
     <p class="section-copy">这里不分专题，不先筛标签，就按发布时间往下看。想按问题线索找，也可以直接走标签页。</p>
   </section>
 
-  <section class="content-block">
-    <div class="tags">
+  <section class="content-block notes-glance panel">
+    <div class="notes-glance-main">
+      <p class="card-kicker">先看这里</p>
+      <h2>这页只做两件事：把已经写下来的按时间排好，也把常用入口摆在前面。</h2>
+    </div>
+    <div class="notes-glance-metrics">
+      <div class="notes-glance-item">
+        <span class="notes-glance-value">{notes.length}</span>
+        <span class="notes-glance-label">已发布笔记</span>
+      </div>
+      <div class="notes-glance-item">
+        <span class="notes-glance-value">{featuredCount}</span>
+        <span class="notes-glance-label">首页精选</span>
+      </div>
+      <div class="notes-glance-item">
+        <span class="notes-glance-value">{tagStats.length}</span>
+        <span class="notes-glance-label">常用标签</span>
+      </div>
+    </div>
+    <div class="notes-glance-links">
       <a class="tag is-active" href="/notes">全部笔记 ({notes.length})</a>
       <a class="tag" href="/tags">去看标签</a>
+      <a class="tag" href="/archive">按专题看</a>
+      <a class="tag" href="/about">先看关于</a>
+    </div>
+  </section>
+
+  <section class="content-block notes-tag-strip">
+    <div class="tags">
       {tagStats.map((tag) => (
         <a class="tag" href={`/tags/${tag.slug}`}>{tag.label} ({tag.count})</a>
       ))}
     </div>
   </section>
 
-  <section class="content-block notes-index-layout">
-    <div class="year-groups notes-index-main">
-      {notesByYear.map(([year, items]) => (
-        <div class="year-group">
-          <div class="year-group-head">
-            <p class="year-group-label">{year}</p>
-            <span class="year-group-count">{items.length} 篇</span>
-          </div>
-          <div class="archive-list">
-            {items.map((note) => (
-              <article class="archive-item">
-                <div class="small-meta">{dateFormatter.format(note.data.date)}</div>
-                <div>
-                  <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
-                  <p>{getNoteSummary(note)}</p>
-                  <div class="meta-row">
-                    <span>{note.data.featured ? "精选" : "已发布"}</span>
-                    <span>{note.data.readingTime}</span>
-                    <span>{note.data.category}</span>
-                  </div>
+  <section class="content-block year-groups notes-index-main">
+    {notesByYear.map(([year, items]) => (
+      <div class="year-group">
+        <div class="year-group-head">
+          <p class="year-group-label">{year}</p>
+          <span class="year-group-count">{items.length} 篇</span>
+        </div>
+        <div class="archive-list">
+          {items.map((note) => (
+            <article class="archive-item archive-item-note">
+              <div class="small-meta">{dateFormatter.format(note.data.date)}</div>
+              <div>
+                <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+                <p>{getNoteSummary(note)}</p>
+                <div class="meta-row">
+                  <span>{note.data.featured ? "精选" : "已发布"}</span>
+                  <span>{note.data.readingTime}</span>
+                  <span>{note.data.category}</span>
                 </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <aside class="notes-sidebar">
-      <div class="notes-sidebar-shell panel">
-        <div class="notes-sidebar-hero">
-          <p class="card-kicker">内容索引</p>
-          <h3>这边不是装饰，是给你换条路往下看的。</h3>
-          <p>如果不想从第一页一路滚下去，可以先从最近、标签，或者专题入口里挑一条线。</p>
-        </div>
-
-        <div class="notes-sidebar-metrics">
-          <div class="notes-metric-card">
-            <span class="notes-metric-value">{notes.length}</span>
-            <span class="notes-metric-label">已发布笔记</span>
-          </div>
-          <div class="notes-metric-card">
-            <span class="notes-metric-value">{featuredCount}</span>
-            <span class="notes-metric-label">首页精选</span>
-          </div>
-          <div class="notes-metric-card">
-            <span class="notes-metric-value">{tagStats.length}</span>
-            <span class="notes-metric-label">常用标签</span>
-          </div>
-        </div>
-
-        <div class="notes-sidebar-section">
-          <p class="card-kicker">最近写下的</p>
-          <div class="notes-sidebar-list">
-            {latestNotes.map((note) => (
-              <a class="notes-sidebar-link" href={`/notes/${note.id}/`}>
-                <strong>{note.data.title}</strong>
-                <span>{dateFormatter.format(note.data.date)} · {note.data.readingTime}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div class="notes-sidebar-section">
-          <p class="card-kicker">常用标签</p>
-          <div class="tag-cloud">
-            {tagStats.map((tag) => (
-              <a class="tag-pill" href={`/tags/${tag.slug}`}>{tag.label}</a>
-            ))}
-          </div>
-        </div>
-
-        <div class="notes-sidebar-section notes-sidebar-links">
-          <p class="card-kicker">换条路看</p>
-          <a class="notes-jump-link" href="/archive">
-            <strong>按专题看</strong>
-            <span>先按问题线和旧文入口往下逛</span>
-          </a>
-          <a class="notes-jump-link" href="/tags">
-            <strong>按标签找</strong>
-            <span>从关键词和主题词切进去</span>
-          </a>
-          <a class="notes-jump-link" href="/about">
-            <strong>先看关于</strong>
-            <span>想知道这站为什么这么写，可以先看这里</span>
-          </a>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
-    </aside>
+    ))}
   </section>
 </BaseLayout>

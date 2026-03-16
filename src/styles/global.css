@@ -2064,3 +2064,162 @@ html[data-theme="dark"] {
     padding: 0.78rem 0.82rem;
   }
 }
+
+.latest-list {
+  padding: 0.35rem 1.25rem;
+}
+
+.latest-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) auto;
+  gap: 1rem;
+  align-items: end;
+  padding: 1rem 0;
+}
+
+.latest-item + .latest-item {
+  border-top: 1px solid var(--line);
+}
+
+.latest-item-main > * + * {
+  margin-top: 0.52rem;
+}
+
+.latest-item-main h3 {
+  font-size: 1.08rem;
+  line-height: 1.18;
+}
+
+.latest-item-main p {
+  max-width: 42rem;
+  font-size: 0.95rem;
+  line-height: 1.62;
+}
+
+.notes-glance {
+  display: grid;
+  gap: 1rem;
+  padding: 1.3rem;
+}
+
+.notes-glance-main {
+  display: grid;
+  gap: 0.48rem;
+  max-width: 46rem;
+}
+
+.notes-glance-main h2 {
+  font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+  line-height: 1.12;
+}
+
+.notes-glance-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.notes-glance-item {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--line);
+}
+
+.notes-glance-value {
+  font-size: 1.28rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.notes-glance-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.notes-glance-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.notes-tag-strip {
+  margin-top: 1rem;
+}
+
+.archive-item-note {
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.archive-item-note h3 {
+  font-size: 1.16rem;
+  line-height: 1.18;
+}
+
+.archive-item-note p {
+  max-width: 44rem;
+  line-height: 1.64;
+}
+
+@media (max-width: 768px) {
+  .latest-list {
+    padding: 0.25rem 1rem;
+  }
+
+  .latest-item {
+    grid-template-columns: 1fr;
+    gap: 0.66rem;
+    padding: 0.88rem 0;
+  }
+
+  .latest-item-main h3 {
+    font-size: 1rem;
+    line-height: 1.22;
+  }
+
+  .latest-item-main p {
+    font-size: 0.92rem;
+    line-height: 1.56;
+  }
+
+  .notes-glance {
+    padding: 1rem;
+    gap: 0.9rem;
+  }
+
+  .notes-glance-main h2 {
+    font-size: clamp(1.22rem, 6.2vw, 1.5rem);
+  }
+
+  .notes-glance-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .notes-glance-item {
+    padding: 0.72rem 0.7rem;
+  }
+
+  .notes-glance-value {
+    font-size: 1.02rem;
+  }
+
+  .notes-glance-label {
+    font-size: 0.72rem;
+    line-height: 1.32;
+  }
+
+  .notes-tag-strip {
+    margin-top: 0.8rem;
+  }
+
+  .archive-item-note {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-item-note h3 {
+    font-size: 1rem;
+  }
+}

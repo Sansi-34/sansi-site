@@ -11,7 +11,7 @@ const searchIndex = getSearchIndex(notes);
 const featuredBase = getFeaturedNotes(notes, 3);
 const featuredFill = getLatestNotes(notes, 3, { excludeIds: featuredBase.map((note) => note.id) });
 const featuredNotes = [...featuredBase, ...featuredFill].slice(0, 3);
-const latestNotes = getLatestNotes(notes, 3, { excludeIds: featuredNotes.map((note) => note.id) });
+const latestNotes = getLatestNotes(notes, 4, { excludeIds: featuredNotes.map((note) => note.id) });
 const leadFeatured = featuredNotes[0];
 const sideFeatured = featuredNotes.slice(1);
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
@@ -77,16 +77,18 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
       <div class="section-heading-row">
         <div class="section-heading">
           <p class="eyebrow">最新文章</p>
-          <h2>新写出来的，会先顺着时间落在这里。</h2>
+          <h2>新写出来的，先顺着时间落在这里。</h2>
         </div>
         <a class="section-link" href="/notes">按时间看全部笔记</a>
       </div>
-      <div class="latest-stream">
+      <div class="latest-list panel">
         {latestNotes.map((note) => (
-          <article class="feature-card latest-card">
-            <p class="card-kicker">最新文章</p>
-            <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
-            <p>{getNoteSummary(note)}</p>
+          <article class="latest-item">
+            <div class="latest-item-main">
+              <p class="card-kicker">最新文章</p>
+              <h3><a href={`/notes/${note.id}/`}>{note.data.title}</a></h3>
+              <p>{getNoteSummary(note)}</p>
+            </div>
             <div class="meta-row">
               <span>{dateFormatter.format(note.data.date)}</span>
               <span>{note.data.readingTime}</span>
