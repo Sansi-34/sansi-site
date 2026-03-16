@@ -1,6 +1,6 @@
 ﻿export const siteMeta = {
   name: "Sansi",
-  titleSuffix: "Sansi",
+  titleSuffix: "Sansi · blog",
   description: "记录 C++、嵌入式、PCB 打板与 AR 图形实践，持续整理确定性、验证链路与性能预算。",
   siteUrl: "http://39.97.252.239",
   themeColor: "#fafafa",
@@ -120,3 +120,4 @@ export const contactInfo = {
 };
 
 export const footerText = "先把真的摆上来。";
+
