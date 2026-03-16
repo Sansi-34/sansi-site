@@ -34,7 +34,12 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   <div class="layout-post">
     <article>
       <header class="post-header">
-        <p class="eyebrow">{note.data.kicker}</p>
+        <div class="post-header-top">
+          <p class="eyebrow">{note.data.kicker}</p>
+          <button class="copy-btn article-link-btn" type="button" data-copy-link-btn data-copy-url={Astro.url.toString()}>
+            <span data-copy-link-label>复制链接</span>
+          </button>
+        </div>
         <h1>{note.data.title}</h1>
         <div class="meta-row">
           <span>{dateFormatter.format(note.data.date)}</span>
@@ -102,3 +107,4 @@ const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
     </section>
   )}
 </BaseLayout>
+

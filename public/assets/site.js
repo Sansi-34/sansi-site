@@ -242,6 +242,26 @@
         }, 1400);
       });
     });
+
+    document.querySelectorAll("[data-copy-link-btn]").forEach((btn) => {
+      if (btn.dataset.boundCopyLink === "true") return;
+      btn.dataset.boundCopyLink = "true";
+      btn.addEventListener("click", async () => {
+        const labelNode = btn.querySelector("[data-copy-link-label]");
+        const copyUrl = btn.dataset.copyUrl || window.location.href;
+        if (!labelNode) return;
+        const originalLabel = labelNode.textContent;
+        try {
+          await navigator.clipboard.writeText(copyUrl);
+          labelNode.textContent = "链接已复制";
+        } catch {
+          labelNode.textContent = "复制失败";
+        }
+        window.setTimeout(() => {
+          labelNode.textContent = originalLabel;
+        }, 1400);
+      });
+    });
   }
 
   function initPage() {
@@ -257,3 +277,4 @@
   document.addEventListener("astro:page-load", initPage);
   document.addEventListener("astro:after-swap", () => applyTheme(getStoredThemeMode()));
 })();
+
