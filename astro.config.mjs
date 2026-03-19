@@ -3,5 +3,5 @@ import mdx from "@astrojs/mdx";
 
 export default defineConfig({
   integrations: [mdx()],
-  site: "https://sansi34.ggff.net"
+  site: "https://sansi34.xyz"
 });
